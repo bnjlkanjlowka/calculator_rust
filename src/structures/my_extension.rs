@@ -1,7 +1,7 @@
 pub trait MyStringExtension {
     fn is_float(&self) -> bool;
     fn reverse(&mut self);
-    fn remove_parentheses(self) -> String;
+    fn is_negative_opening_parenthesis(&self, index_parenthesis: usize) -> bool;
 }
 
 impl MyStringExtension for String {
@@ -18,14 +18,25 @@ impl MyStringExtension for String {
         *self = self.chars().rev().collect::<String>();
     }
 
-    fn remove_parentheses(self) -> String {
-        let mut string = String::new();
-        for chr in self.chars() {
+    fn is_negative_opening_parenthesis(&self, index_parenthesis: usize) -> bool {
+        let mut negative_flag = false;
+        for chr in self.chars().skip(index_parenthesis + 1) {
             match chr {
-                '(' | ')' => continue,
-                _ => string.push(chr),
+                '0'..='9' => {
+                    if negative_flag {
+                        return true;
+                    }
+                }
+                '+' | '*' | '/' | '^' | '(' => return false,
+                '-' => negative_flag = true,
+                ')' => {
+                    if negative_flag {
+                        return true;
+                    }
+                }
+                _ => continue,
             }
         }
-        string
+        false
     }
 }
